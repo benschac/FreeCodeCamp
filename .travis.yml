@@ -1,22 +1,36 @@
 language: node_js
 
 node_js:
-  - '4.2.1'
-
-before_install: if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+  - 'lts/*'
 
 cache:
   directories:
-    - node_modules
+    - '$HOME/.npm'
 
 env:
-  - CXX=g++-4.8
+  global:
+    - NO_UPDATE_NOTIFIER=1
+    - NODE_NO_WARNINGS=1
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
+before_install:
+  - npm config set loglevel warn
 
-sudo: false
+install: npm ci
+
+before_script:
+  - npm run ensure-env
+
+jobs:
+  include:
+    - stage: Lint javaScript
+      script:
+        - npm run lint
+
+    - stage: Unit and Integration tests
+      script: npm test
+
+    - stage: Artifacts builds
+      if: branch = master && type != pull_request
+      script: bash tools/ci-scripts/trigger-build.sh
+      install: skip
+      before_script: skip

@@ -1,0 +1,32 @@
+.reflex-element {
+  overflow: hidden !important;
+}
+
+.monaco-menu .action-label {
+  color: #a2bd9b;
+  letter-spacing: 0.02em;
+}
+
+#challenge-page-tabs .nav-tabs {
+  margin-left: 2px;
+  display: flex;
+}
+
+#challenge-page-tabs .nav-tabs > li {
+  flex: 1;
+  text-align: center;
+}
+
+#challenge-page-tabs .nav-tabs > li > a {
+  padding: 5px 10px;
+}
+
+#challenge-page-tabs .tab-content {
+  height: calc(100vh - var(--header-height) - 69px);
+  overflow-y: auto;
+}
+
+#challenge-page-tabs .tab-pane {
+  height: 100%;
+  overflow: hidden;
+}
