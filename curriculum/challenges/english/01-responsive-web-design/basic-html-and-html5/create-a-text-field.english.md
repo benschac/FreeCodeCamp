@@ -2,7 +2,9 @@
 id: bad87fee1348bd9aedf08829
 title: Create a Text Field
 challengeType: 0
+isHidden: false
 videoUrl: 'https://scrimba.com/p/pVMPUv/c2EVnf6'
+forumTopicId: 16823
 ---
 
 ## Description
@@ -25,7 +27,7 @@ Create an <code>input</code> element of type <code>text</code> below your lists.
 ```yml
 tests:
   - text: Your app should have an <code>input</code> element of type <code>text</code>.
-    testString: assert($("input[type=text]").length > 0, 'Your app should have an <code>input</code> element of type <code>text</code>.');
+    testString: assert($("input[type=text]").length > 0);
 
 ```
 

@@ -2,14 +2,20 @@
 id: 587d7fb6367417b2b2512c06
 title: Install and Set Up Mongoose
 challengeType: 2
+isHidden: false
+forumTopicId: 301540
 ---
 
 ## Description
 <section id='description'>
-Add mongodb and mongoose to the project’s package.json. Then require mongoose. Store your mLab database URI in the private .env file as MONGO_URI. Connect to the database using mongoose.connect(<Your URI>)
+Add mongodb and mongoose to the project’s package.json. Then require mongoose. Store your MongoDB Atlas database URI in the private <code>.env</code> file as MONGO_URI. Surround the the URI with single or double quotes and make sure no space exists between both the variable and the `=` and the value and `=`. Connect to the database using the following syntax:
+
+```js
+mongoose.connect(<Your URI>, { useNewUrlParser: true, useUnifiedTopology: true }); 
+```
+
 </section>
 
-## Instructions
 <section id='instructions'>
 
 </section>
@@ -39,6 +45,11 @@ tests:
 <section id='solution'>
 
 ```js
-// solution required
+/**
+  Backend challenges don't need solutions, 
+  because they would need to be tested against a full working project. 
+  Please check our contributing guidelines to learn more.
+*/
 ```
+
 </section>

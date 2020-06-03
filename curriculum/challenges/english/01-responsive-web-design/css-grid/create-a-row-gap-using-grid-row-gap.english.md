@@ -2,7 +2,9 @@
 id: 5a9036ee38fddaf9a66b5d36
 title: Create a Row Gap using grid-row-gap
 challengeType: 0
+isHidden: false
 videoUrl: 'https://scrimba.com/p/pByETK/cPbJ2Cv'
+forumTopicId: 301125
 ---
 
 ## Description
@@ -21,7 +23,7 @@ Create a gap for the rows that is <code>5px</code> tall.
 ```yml
 tests:
   - text: <code>container</code> class should have a <code>grid-row-gap</code> property that has the value of <code>5px</code>.
-    testString: assert(code.match(/.container\s*?{[\s\S]*grid-row-gap\s*?:\s*?5px\s*?;[\s\S]*}/gi), '<code>container</code> class should have a <code>grid-row-gap</code> property that has the value of <code>5px</code>.');
+    testString: assert(code.match(/.container\s*?{[\s\S]*grid-row-gap\s*?:\s*?5px\s*?;[\s\S]*}/gi));
 
 ```
 
@@ -48,10 +50,10 @@ tests:
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
-    /* add your code below this line */
+    /* Only change code below this line */
 
-
-    /* add your code above this line */
+    
+    /* Only change code above this line */
   }
 </style>
 

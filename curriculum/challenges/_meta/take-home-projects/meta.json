@@ -6,7 +6,7 @@
   "template": "",
   "required": [],
   "superBlock": "coding-interview-prep",
-  "superOrder": 8,
+  "superOrder": 11,
   "challengeOrder": [
     [
       "bd7158d8c442eddfaeb5bd10",
@@ -34,7 +34,7 @@
     ],
     [
       "bd7156d8c242eddfaeb5bd13",
-      "Build a Camper Leaderboard"
+      "Build a freeCodeCamp Forum Homepage"
     ],
     [
       "bd7155d8c242eddfaeb5bd13",

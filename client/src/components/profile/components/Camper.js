@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Col, Row, Image } from '@freecodecamp/react-bootstrap';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import { faAward } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAward, faHeart } from '@fortawesome/free-solid-svg-icons';
+import Identicon from 'react-identicons';
 
 import SocialIcons from './SocialIcons';
 
@@ -11,6 +12,7 @@ import './camper.css';
 const propTypes = {
   about: PropTypes.string,
   githubProfile: PropTypes.string,
+  isDonating: PropTypes.bool,
   isGithub: PropTypes.bool,
   isLinkedIn: PropTypes.bool,
   isTwitter: PropTypes.bool,
@@ -53,6 +55,7 @@ function Camper({
   about,
   yearsTopContributor,
   githubProfile,
+  isDonating,
   isLinkedIn,
   isGithub,
   isTwitter,
@@ -61,16 +64,29 @@ function Camper({
   twitter,
   website
 }) {
+  // A lot of the user-profiles are still using the defunct service.
+  const avatar = /example.com|identicon.org/.test(picture) ? (
+    <Identicon
+      bg={'#858591'}
+      count={5}
+      fg={'#0A0A23'}
+      padding={5}
+      size={256}
+      string={username}
+    />
+  ) : (
+    <Image
+      alt={username + "'s avatar"}
+      className='avatar'
+      responsive={true}
+      src={picture}
+    />
+  );
   return (
     <div>
       <Row>
         <Col className='avatar-container' xs={12}>
-          <Image
-            alt={username + "'s avatar"}
-            className='avatar'
-            responsive={true}
-            src={picture}
-          />
+          <div className={isDonating ? 'supporter-img' : ''}>{avatar}</div>
         </Col>
       </Row>
       <SocialIcons
@@ -81,18 +97,19 @@ function Camper({
         isWebsite={isWebsite}
         linkedin={linkedin}
         twitter={twitter}
+        username={username}
         website={website}
       />
       <br />
       <h2 className='text-center username'>@{username}</h2>
       {name && <p className='text-center name'>{name}</p>}
       {location && <p className='text-center location'>{location}</p>}
-      {about && <p className='bio text-center'>{about}</p>}
-      {typeof points === 'number' ? (
-        <p className='text-center points'>
-          {`${points} ${pluralise('point', points !== 1)}`}
+      {isDonating && (
+        <p className='text-center supporter'>
+          <FontAwesomeIcon icon={faHeart} /> Supporter
         </p>
-      ) : null}
+      )}
+      {about && <p className='bio text-center'>{about}</p>}
       {yearsTopContributor.filter(Boolean).length > 0 && (
         <div>
           <br />
@@ -103,6 +120,11 @@ function Camper({
         </div>
       )}
       <br />
+      {typeof points === 'number' ? (
+        <p className='text-center points'>
+          {`${points} ${pluralise('total point', points !== 1)}`}
+        </p>
+      ) : null}
     </div>
   );
 }

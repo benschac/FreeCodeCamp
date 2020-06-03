@@ -23,8 +23,13 @@ export const publicUserProps = [
   'isFrontEndLibsCert',
   'isHonest',
   'isInfosecQaCert',
+  'isQaCert',
+  'isInfosecCert',
   'isJsAlgoDataStructCert',
   'isRespWebDesignCert',
+  'isSciCompPyCert',
+  'isDataAnalysisPyCert',
+  'isMachineLearningPyCert',
   'linkedin',
   'location',
   'name',
@@ -51,7 +56,8 @@ export const userPropsForSession = [
   'completedProjectCount',
   'completedCertCount',
   'completedLegacyCertCount',
-  'acceptedPrivacyTerms'
+  'acceptedPrivacyTerms',
+  'donationEmails'
 ];
 
 export function normaliseUserFields(user) {

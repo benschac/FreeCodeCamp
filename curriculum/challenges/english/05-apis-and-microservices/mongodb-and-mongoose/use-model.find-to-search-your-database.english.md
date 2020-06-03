@@ -2,12 +2,14 @@
 id: 587d7fb7367417b2b2512c0b
 title: Use model.find() to Search Your Database
 challengeType: 2
+isHidden: false
+forumTopicId: 301543
 ---
 
 ## Description
 <section id='description'>
-Find all the people having a given name, using Model.find() -> [Person]
-In its simplest usage, Model.find() accepts a query document (a JSON object ) as the first argument, then a callback. It returns an array of matches. It supports an extremely wide range of search options. Check it in the docs. Use the function argument personName as search key.
+Find all the people having a given name, using <code>Model.find() -> [Person]</code>
+In its simplest usage, <code>Model.find()</code> accepts a query document (a JSON object) as the first argument, then a callback. It returns an array of matches. It supports an extremely wide range of search options. Check it in the docs. Use the function argument <code>personName</code> as search key.
 </section>
 
 ## Instructions
@@ -36,6 +38,11 @@ tests:
 <section id='solution'>
 
 ```js
-// solution required
+/**
+  Backend challenges don't need solutions, 
+  because they would need to be tested against a full working project. 
+  Please check our contributing guidelines to learn more.
+*/
 ```
+
 </section>

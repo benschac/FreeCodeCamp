@@ -4,11 +4,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { uniq, find } from 'lodash';
+import { dasherize } from '../../../../../utils/slugs';
 
 import Block from './Block';
 
 import { makeExpandedSuperBlockSelector, toggleSuperBlock } from '../redux';
-import Caret from '../../icons/Caret';
+import Caret from '../../../assets/icons/Caret';
 import { ChallengeNode } from '../../../redux/propTypes';
 
 const mapStateToProps = (state, ownProps) => {
@@ -50,7 +51,7 @@ const codingPrepRE = new RegExp('Interview Prep');
 function createSuperBlockTitle(str) {
   return codingPrepRE.test(str)
     ? `${str} (Thousands of hours of challenges)`
-    : `${str} Certification (300 hours)`;
+    : `${str} Certification (300\xa0hours)`;
 }
 
 export class SuperBlock extends Component {
@@ -59,9 +60,12 @@ export class SuperBlock extends Component {
     const blocksForSuperBlock = nodes.filter(
       node => node.superBlock === superBlock
     );
+    // since the nodes have been filtered based on isHidden, any blocks whose
+    // nodes have been entirely removed will not appear in this array.
     const blockDashedNames = uniq(
       blocksForSuperBlock.map(({ block }) => block)
     );
+    // render all non-empty blocks
     return (
       <ul>
         {blockDashedNames.map(blockDashedName => (
@@ -88,11 +92,18 @@ export class SuperBlock extends Component {
   render() {
     const { superBlock, isExpanded, toggleSuperBlock } = this.props;
     return (
-      <li className={`superblock ${isExpanded ? 'open' : ''}`}>
-        <div className='map-title' onClick={() => toggleSuperBlock(superBlock)}>
+      <li
+        className={`superblock ${isExpanded ? 'open' : ''}`}
+        id={dasherize(superBlock)}
+      >
+        <button
+          aria-expanded={isExpanded}
+          className='map-title'
+          onClick={() => toggleSuperBlock(superBlock)}
+        >
           <Caret />
           <h4>{createSuperBlockTitle(superBlock)}</h4>
-        </div>
+        </button>
         {isExpanded ? this.renderBlock(superBlock) : null}
       </li>
     );

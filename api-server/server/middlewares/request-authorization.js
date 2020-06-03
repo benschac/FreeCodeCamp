@@ -1,5 +1,6 @@
-import loopback from 'loopback';
 import { isEmpty } from 'lodash';
+
+import { getUserById as _getUserById } from '../utils/user-stats';
 import {
   getAccessTokenFromRequest,
   errorTypes,
@@ -10,13 +11,38 @@ import { jwtSecret as _jwtSecret } from '../../../config/secrets';
 
 import { wrapHandledError } from '../utils/create-handled-error';
 
-// We need to tunnel through a proxy path set up within
-// the gatsby app, at this time, that path is /internal
-const apiProxyRE = /^\/internal\/|^\/external\//;
-const newsShortLinksRE = /^\/internal\/n\/|^\/internal\/p\?/;
-const loopbackAPIPathRE = /^\/internal\/api\//;
+const authRE = /^\/auth\//;
+const confirmEmailRE = /^\/confirm-email$/;
+const newsShortLinksRE = /^\/n\/|^\/p\//;
+const publicUserRE = /^\/api\/users\/get-public-profile$/;
+const publicUsernameRE = /^\/api\/users\/exists$/;
+const resubscribeRE = /^\/resubscribe\//;
+const showCertRE = /^\/certificate\/showCert\//;
+// note: signin may not have a trailing slash
+const signinRE = /^\/signin/;
+const statusRE = /^\/status\/ping$/;
+const unsubscribedRE = /^\/unsubscribed\//;
+const unsubscribeRE = /^\/u\/|^\/unsubscribe\/|^\/ue\//;
+const updateHooksRE = /^\/hooks\/update-paypal$|^\/hooks\/update-stripe$/;
 
-const _whiteListREs = [newsShortLinksRE, loopbackAPIPathRE];
+// note: this would be replaced by webhooks later
+const donateRE = /^\/donate\/charge-stripe$/;
+
+const _whiteListREs = [
+  authRE,
+  confirmEmailRE,
+  newsShortLinksRE,
+  publicUserRE,
+  publicUsernameRE,
+  resubscribeRE,
+  showCertRE,
+  signinRE,
+  statusRE,
+  unsubscribedRE,
+  unsubscribeRE,
+  updateHooksRE,
+  donateRE
+];
 
 export function isWhiteListedPath(path, whiteListREs = _whiteListREs) {
   return whiteListREs.some(re => re.test(path));
@@ -25,7 +51,7 @@ export function isWhiteListedPath(path, whiteListREs = _whiteListREs) {
 export default ({ jwtSecret = _jwtSecret, getUserById = _getUserById } = {}) =>
   function requestAuthorisation(req, res, next) {
     const { path } = req;
-    if (apiProxyRE.test(path) && !isWhiteListedPath(path)) {
+    if (!isWhiteListedPath(path)) {
       const { accessToken, error, jwt } = getAccessTokenFromRequest(
         req,
         jwtSecret
@@ -50,10 +76,10 @@ export default ({ jwtSecret = _jwtSecret, getUserById = _getUserById } = {}) =>
         });
       }
       if (!accessToken && error === errorTypes.expiredToken) {
-        throw wrapHandledError(new Error('Access token is no longer vaild'), {
+        throw wrapHandledError(new Error('Access token is no longer valid'), {
           type: 'info',
           redirect: `${homeLocation}/signin`,
-          message: 'Access token is no longer vaild',
+          message: 'Access token is no longer valid',
           status: 403
         });
       }
@@ -63,7 +89,6 @@ export default ({ jwtSecret = _jwtSecret, getUserById = _getUserById } = {}) =>
         return getUserById(userId)
           .then(user => {
             if (user) {
-              user.points = user.progressTimestamps.length;
               req.user = user;
             }
             return;
@@ -76,15 +101,3 @@ export default ({ jwtSecret = _jwtSecret, getUserById = _getUserById } = {}) =>
     }
     return Promise.resolve(next());
   };
-
-export function _getUserById(id) {
-  const User = loopback.getModelByType('User');
-  return new Promise((resolve, reject) =>
-    User.findById(id, (err, instance) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve(instance);
-    })
-  );
-}

@@ -17,8 +17,6 @@ import { FullWidthRow, ButtonSpacer, Spacer } from '../helpers';
 import SectionHeader from './SectionHeader';
 import BlockSaveButton from '../helpers/form/BlockSaveButton';
 
-import './portfolio.css';
-
 const propTypes = {
   picture: PropTypes.string,
   portfolio: PropTypes.arrayOf(
@@ -67,15 +65,15 @@ class PortfolioSettings extends Component {
     const userInput = e.target.value.slice();
     return this.setState(state => {
       const { portfolio: currentPortfolio } = state;
-      const mutatblePortfolio = currentPortfolio.slice(0);
+      const mutablePortfolio = currentPortfolio.slice(0);
       const index = findIndex(currentPortfolio, p => p.id === id);
 
-      mutatblePortfolio[index] = {
-        ...mutatblePortfolio[index],
+      mutablePortfolio[index] = {
+        ...mutablePortfolio[index],
         [key]: userInput
       };
 
-      return { portfolio: mutatblePortfolio };
+      return { portfolio: mutablePortfolio };
     });
   };
 
@@ -137,14 +135,14 @@ class PortfolioSettings extends Component {
     if (charsLeft < 0) {
       return {
         state: 'error',
-        message: 'There is a maxiumum limit of 288 characters, you have 0 left'
+        message: 'There is a maximum limit of 288 characters, you have 0 left'
       };
     }
     if (charsLeft < 41 && charsLeft > 0) {
       return {
         state: 'warning',
         message:
-          'There is a maxiumum limit of 288 characters, you have ' +
+          'There is a maximum limit of 288 characters, you have ' +
           charsLeft +
           ' left'
       };
@@ -285,7 +283,6 @@ class PortfolioSettings extends Component {
               block={true}
               bsSize='lg'
               bsStyle='danger'
-              className='btn-delete-portfolio'
               onClick={() => this.handleRemoveItem(id)}
               type='button'
             >

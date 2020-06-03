@@ -2,20 +2,26 @@
 id: 5a9d726c424fe3d0e10cad11
 title: Create a custom CSS Variable
 challengeType: 0
+isHidden: false
 videoUrl: 'https://scrimba.com/c/cQd27Hr'
+forumTopicId: 301086
 ---
 
 ## Description
 <section id='description'>
-To create a CSS Variable, you just need to give it a <code>name</code> with <code>two dashes</code> in front of it and assign it a <code>value</code> like this:
-<blockquote>--penguin-skin: gray;</blockquote>
+To create a CSS variable, you just need to give it a name with two hyphens in front of it and assign it a value like this:
+
+```css
+--penguin-skin: gray;
+```
+
 This will create a variable named <code>--penguin-skin</code> and assign it the value of <code>gray</code>.
 Now you can use that variable elsewhere in your CSS to change the value of other elements to gray.
 </section>
 
 ## Instructions
 <section id='instructions'>
-In the <code>penguin</code> class, create a variable name <code>--penguin-skin</code> and give it a value of <code>gray</code>
+In the <code>penguin</code> class, create a variable name <code>--penguin-skin</code> and give it a value of <code>gray</code>.
 </section>
 
 ## Tests
@@ -24,7 +30,7 @@ In the <code>penguin</code> class, create a variable name <code>--penguin-skin</
 ```yml
 tests:
   - text: <code>penguin</code> class should declare the <code>--penguin-skin</code> variable and assign it to <code>gray</code>.
-    testString: assert(code.match(/.penguin\s*?{[\s\S]*--penguin-skin\s*?:\s*?gray\s*?;[\s\S]*}/gi), '<code>penguin</code> class should declare the <code>--penguin-skin</code> variable and assign it to <code>gray</code>.');
+    testString: assert(code.match(/.penguin\s*?{[\s\S]*--penguin-skin\s*?:\s*?gray\s*?;[\s\S]*}/gi));
 
 ```
 
@@ -38,10 +44,9 @@ tests:
 ```html
 <style>
   .penguin {
+    /* Only change code below this line */
 
-    /* add code below */
-
-    /* add code above */
+    /* Only change code above this line */
     position: relative;
     margin: auto;
     display: block;

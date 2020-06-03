@@ -1,94 +1,69 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Media from 'react-media';
-import FCCSearch from 'react-freecodecamp-search';
+import React from 'react';
+import Helmet from 'react-helmet';
 
-import NavLogo from './components/NavLogo';
-import UserState from './components/UserState';
-import { Link } from '../helpers';
+import stripeObserver from './stripeIframesFix';
+import UniversalNav from './components/UniversalNav';
 
 import './header.css';
 
-class Header extends Component {
+export class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isMenuOpened: false
+      displayMenu: false
     };
     this.menuButtonRef = React.createRef();
+    this.searchBarRef = React.createRef();
+    this.handleClickOutside = this.handleClickOutside.bind(this);
+    this.toggleDisplayMenu = this.toggleDisplayMenu.bind(this);
   }
 
   componentDidMount() {
     document.addEventListener('click', this.handleClickOutside);
+
+    // Remove stacking Stripe iframes with each navigation
+    // after visiting /donate
+    stripeObserver();
   }
 
   componentWillUnmount() {
     document.removeEventListener('click', this.handleClickOutside);
   }
 
-  toggleClass = () => {
-    this.setState({
-      isMenuOpened: !this.state.isMenuOpened
-    });
-  };
-
-  handleClickOutside = event => {
+  handleClickOutside(event) {
     if (
-      this.state.isMenuOpened &&
-      !this.menuButtonRef.current.contains(event.target)
+      this.state.displayMenu &&
+      this.menuButtonRef.current &&
+      !this.menuButtonRef.current.contains(event.target) &&
+      this.searchBarRef.current &&
+      !this.searchBarRef.current.contains(event.target)
     ) {
-      this.toggleClass();
+      this.toggleDisplayMenu();
     }
-  };
+  }
 
-  handleMediaChange = matches => {
-    if (!matches && this.state.isMenuOpened) {
-      this.toggleClass();
-    }
-  };
-
+  toggleDisplayMenu() {
+    this.setState(({ displayMenu }) => ({ displayMenu: !displayMenu }));
+  }
   render() {
-    const { disableSettings } = this.props;
+    const { displayMenu } = this.state;
     return (
-      <header className={this.state.isMenuOpened ? 'opened' : null}>
-        <nav id='top-nav'>
-          <Link className='home-link' to='/'>
-            <NavLogo />
-          </Link>
-          {disableSettings ? null : <FCCSearch />}
-          <ul id='top-right-nav'>
-            <li>
-              <Link to='/learn'>Learn</Link>
-            </li>
-            <li>
-              <Link external={true} to='/forum'>
-                Forum
-              </Link>
-            </li>
-            <li>
-              <Link external={true} to='/news'>
-                News
-              </Link>
-            </li>
-            <li className='user-state-link'>
-              <UserState disableSettings={disableSettings} />
-            </li>
-          </ul>
-          <span
-            className='menu-button'
-            onClick={this.toggleClass}
-            ref={this.menuButtonRef}
-          >
-            Menu
-          </span>
-          <Media onChange={this.handleMediaChange} query='(max-width: 734px)' />
-        </nav>
-      </header>
+      <>
+        <Helmet>
+          <style>{':root{--header-height: 38px}'}</style>
+        </Helmet>
+        <header>
+          <UniversalNav
+            displayMenu={displayMenu}
+            menuButtonRef={this.menuButtonRef}
+            searchBarRef={this.searchBarRef}
+            toggleDisplayMenu={this.toggleDisplayMenu}
+          />
+        </header>
+      </>
     );
   }
 }
 
-Header.propTypes = {
-  disableSettings: PropTypes.bool
-};
+Header.displayName = 'Header';
 export default Header;

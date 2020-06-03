@@ -2,13 +2,19 @@
 id: 5a9d727a424fe3d0e10cad12
 title: Use a custom CSS Variable
 challengeType: 0
+isHidden: false
 videoUrl: 'https://scrimba.com/c/cM989ck'
+forumTopicId: 301090
 ---
 
 ## Description
 <section id='description'>
 After you create your variable, you can assign its value to other CSS properties by referencing the name you gave it.
-<blockquote>background: var(--penguin-skin);</blockquote>
+
+```css
+background: var(--penguin-skin);
+```
+
 This will change the background of whatever element you are targeting to gray because that is the value of the <code>--penguin-skin</code> variable.
 Note that styles will not be applied unless the variable names are an exact match.
 </section>
@@ -23,14 +29,14 @@ Apply the <code>--penguin-skin</code> variable to the <code>background</code> pr
 
 ```yml
 tests:
-  - text: Apply the <code>--penguin-skin</code> variable to the <code>background</code> property of the <code>penguin-top</code> class.
-    testString: assert(code.match(/.penguin-top\s*?{[\s\S]*background\s*?:\s*?var\s*?\(\s*?--penguin-skin\s*?\)\s*?;[\s\S]*}[\s\S]*.penguin-bottom\s{/gi), 'Apply the <code>--penguin-skin</code> variable to the <code>background</code> property of the <code>penguin-top</code> class.');
-  - text: Apply the <code>--penguin-skin</code> variable to the <code>background</code> property of the <code>penguin-bottom</code> class.
-    testString: assert(code.match(/.penguin-bottom\s*?{[\s\S]*background\s*?:\s*?var\s*?\(\s*?--penguin-skin\s*?\)\s*?;[\s\S]*}[\s\S]*.right-hand\s{/gi), 'Apply the <code>--penguin-skin</code> variable to the <code>background</code> property of the <code>penguin-bottom</code> class.');
-  - text: Apply the <code>--penguin-skin</code> variable to the <code>background</code> property of the <code>right-hand</code> class.
-    testString: assert(code.match(/.right-hand\s*?{[\s\S]*background\s*?:\s*?var\s*?\(\s*?--penguin-skin\s*?\)\s*?;[\s\S]*}[\s\S]*.left-hand\s{/gi), 'Apply the <code>--penguin-skin</code> variable to the <code>background</code> property of the <code>right-hand</code> class.');
-  - text: Apply the <code>--penguin-skin</code> variable to the <code>background</code> property of the <code>left-hand</code> class.
-    testString: assert(code.match(/.left-hand\s*?{[\s\S]*background\s*?:\s*?var\s*?\(\s*?--penguin-skin\s*?\)\s*?;[\s\S]*}/gi), 'Apply the <code>--penguin-skin</code> variable to the <code>background</code> property of the <code>left-hand</code> class.');
+  - text: The <code>--penguin-skin</code> variable should be applied to the <code>background</code> property of the <code>penguin-top</code> class.
+    testString: assert(code.match(/.penguin-top\s*?{[\s\S]*background\s*?:\s*?var\s*?\(\s*?--penguin-skin\s*?\)\s*?;[\s\S]*}[\s\S]*.penguin-bottom\s{/gi));
+  - text: The <code>--penguin-skin</code> variable should be applied to the <code>background</code> property of the <code>penguin-bottom</code> class.
+    testString: assert(code.match(/.penguin-bottom\s*?{[\s\S]*background\s*?:\s*?var\s*?\(\s*?--penguin-skin\s*?\)\s*?;[\s\S]*}[\s\S]*.right-hand\s{/gi));
+  - text: The <code>--penguin-skin</code> variable should be applied to the <code>background</code> property of the <code>right-hand</code> class.
+    testString: assert(code.match(/.right-hand\s*?{[\s\S]*background\s*?:\s*?var\s*?\(\s*?--penguin-skin\s*?\)\s*?;[\s\S]*}[\s\S]*.left-hand\s{/gi));
+  - text: The <code>--penguin-skin</code> variable should be applied to the <code>background</code> property of the <code>left-hand</code> class.
+    testString: assert(code.match(/.left-hand\s*?{[\s\S]*background\s*?:\s*?var\s*?\(\s*?--penguin-skin\s*?\)\s*?;[\s\S]*}/gi));
 
 ```
 
@@ -57,9 +63,9 @@ tests:
     top: 10%;
     left: 25%;
 
-    /* change code below */
+    /* Change code below this line */
     background: black;
-    /* change code above */
+    /* Change code above this line */
 
     width: 50%;
     height: 45%;
@@ -70,9 +76,9 @@ tests:
     top: 40%;
     left: 23.5%;
 
-    /* change code below */
+    /* Change code below this line */
     background: black;
-    /* change code above */
+    /* Change code above this line */
 
     width: 53%;
     height: 45%;
@@ -83,9 +89,9 @@ tests:
     top: 0%;
     left: -5%;
 
-    /* change code below */
+    /* Change code below this line */
     background: black;
-    /* change code above */
+    /* Change code above this line */
 
     width: 30%;
     height: 60%;
@@ -98,9 +104,9 @@ tests:
     top: 0%;
     left: 75%;
 
-    /* change code below */
+    /* Change code below this line */
     background: black;
-    /* change code above */
+    /* Change code above this line */
 
     width: 30%;
     height: 60%;

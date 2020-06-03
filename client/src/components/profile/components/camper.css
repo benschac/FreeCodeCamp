@@ -6,3 +6,14 @@
   display: flex;
   justify-content: center;
 }
+
+.username,
+.name,
+.bio,
+.location {
+  overflow-wrap: break-word;
+}
+
+.supporter-img {
+  border: 10px solid var(--yellow-gold);
+}

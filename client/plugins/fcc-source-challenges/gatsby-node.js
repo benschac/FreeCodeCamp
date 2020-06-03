@@ -1,6 +1,6 @@
 const chokidar = require('chokidar');
 
-const { createChallengeNode } = require('./create-Challenge-nodes');
+const { createChallengeNode } = require('./create-challenge-nodes');
 
 exports.sourceNodes = function sourceChallengesSourceNodes(
   { actions, reporter },
@@ -28,21 +28,21 @@ exports.sourceNodes = function sourceChallengesSourceNodes(
   const { createNode } = actions;
   const watcher = chokidar.watch(curriculumPath, {
     ignored: /(^|[\/\\])\../,
-    persistent: true
+    persistent: true,
+    usePolling: true
   });
 
-  watcher.on('ready', sourceAndCreateNodes).on('change', filePath =>
+  watcher.on('change', filePath =>
     /\.md$/.test(filePath)
       ? onSourceChange(filePath)
           .then(challenge => {
             reporter.info(
-              `File changed at ${filePath}, replacing challengeNode id ${
-                challenge.id
-              }`
+              `
+File changed at ${filePath}, replacing challengeNode id ${challenge.id}
+              `
             );
-            return createChallengeNode(challenge, reporter);
+            createVisibleChallenge(challenge);
           })
-          .then(createNode)
           .catch(e =>
             reporter.error(`fcc-replace-challenge
 
@@ -57,12 +57,7 @@ exports.sourceNodes = function sourceChallengesSourceNodes(
     return source()
       .then(challenges => Promise.all(challenges))
       .then(challenges =>
-        challenges
-          .filter(
-            challenge => challenge.superBlock.toLowerCase() !== 'certificates'
-          )
-          .map(challenge => createChallengeNode(challenge, reporter))
-          .map(node => createNode(node))
+        challenges.map(challenge => createVisibleChallenge(challenge))
       )
       .catch(e =>
         reporter.panic(`fcc-source-challenges
@@ -72,4 +67,13 @@ exports.sourceNodes = function sourceChallengesSourceNodes(
   `)
       );
   }
+
+  function createVisibleChallenge(challenge) {
+    if (challenge.superBlock.toLowerCase() === 'certificates') return;
+    createNode(createChallengeNode(challenge, reporter));
+  }
+
+  return new Promise((resolve, reject) => {
+    watcher.on('ready', () => sourceAndCreateNodes().then(resolve, reject));
+  });
 };

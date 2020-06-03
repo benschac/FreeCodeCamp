@@ -6,7 +6,22 @@ import { homeLocation } from '../../../config/env';
 
 import { unwrapHandledError } from '../utils/create-handled-error.js';
 
-const isDev = process.env.NODE_ENV !== 'production';
+const errTemplate = (error, req) => {
+  const { message, stack } = error;
+  return `
+Error: ${message}
+Is authenticated user: ${!!req.user}
+Headers: ${JSON.stringify(req.headers, null, 2)}
+Original request: ${req.originalMethod} ${req.originalUrl}
+Stack: ${stack}
+
+// raw
+${JSON.stringify(error, null, 2)}
+
+`;
+};
+
+const isDev = process.env.FREECODECAMP_NODE_ENV !== 'production';
 
 export default function prodErrorHandler() {
   // error handling in production.
@@ -26,10 +41,11 @@ export default function prodErrorHandler() {
 
     const redirectTo = handled.redirectTo || `${homeLocation}/`;
     const message =
-      handled.message || 'Oops! Something went wrong. Please try again later';
+      handled.message ||
+      'Oops! Something went wrong. Please try again in a moment.';
 
     if (isDev) {
-      console.error(err);
+      console.error(errTemplate(err, req));
     }
 
     if (type === 'html') {

@@ -2,7 +2,9 @@
 id: bad87fee1348bd9aedf08804
 title: Comment out HTML
 challengeType: 0
+isHidden: false
 videoUrl: 'https://scrimba.com/p/pVMPUv/cGyGbca'
+forumTopicId: 16782
 ---
 
 ## Description
@@ -21,16 +23,16 @@ Comment out your <code>h1</code> element and your <code>p</code> element, but no
 
 ```yml
 tests:
-  - text: Comment out your <code>h1</code> element so that it is not visible on your page.
-    testString: assert(($("h1").length === 0), 'Comment out your <code>h1</code> element so that it is not visible on your page.');
-  - text: Leave your <code>h2</code> element uncommented so that it is visible on your page.
-    testString: assert(($("h2").length > 0), 'Leave your <code>h2</code> element uncommented so that it is visible on your page.');
-  - text: Comment out your <code>p</code> element so that it is not visible on your page.
-    testString: assert(($("p").length === 0), 'Comment out your <code>p</code> element so that it is not visible on your page.');
-  - text: Be sure to close each of your comments with <code>--&#62;</code>.
-    testString: assert(code.match(/[^fc]-->/g).length > 1, 'Be sure to close each of your comments with <code>--&#62;</code>.');
-  - text: Do not change the order of the <code>h1</code> <code>h2</code> or <code>p</code> in the code.
-    testString: assert((code.match(/<([a-z0-9]){1,2}>/g)[0]==="<h1>" && code.match(/<([a-z0-9]){1,2}>/g)[1]==="<h2>" && code.match(/<([a-z0-9]){1,2}>/g)[2]==="<p>") , 'Do not change the order of the <code>h1</code> <code>h2</code> or <code>p</code> in the code.');
+  - text: Your <code>h1</code> element should be commented out so that it is not visible on the page.
+    testString: assert(($("h1").length === 0));
+  - text: Your <code>h2</code> element should not be commented out so that it is visible on the page.
+    testString: assert(($("h2").length > 0));
+  - text: Your <code>p</code> element should be commented out so that it is not visible on the page.
+    testString: assert(($("p").length === 0));
+  - text: Each of your comments should be closed with <code>--&#62;</code>.
+    testString: assert(code.match(/[^fc]-->/g).length > 1);
+  - text: You should not change the order of the <code>h1</code> <code>h2</code> or <code>p</code> in the code.
+    testString: assert((code.match(/<([a-z0-9]){1,2}>/g)[0]==="<h1>" && code.match(/<([a-z0-9]){1,2}>/g)[1]==="<h2>" && code.match(/<([a-z0-9]){1,2}>/g)[2]==="<p>") );
 
 ```
 

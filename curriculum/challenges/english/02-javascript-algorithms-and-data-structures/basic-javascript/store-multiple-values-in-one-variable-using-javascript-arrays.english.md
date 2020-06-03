@@ -2,7 +2,9 @@
 id: bd7993c9c69feddfaeb8bdef
 title: Store Multiple Values in one Variable using JavaScript Arrays
 challengeType: 1
+isHidden: false
 videoUrl: 'https://scrimba.com/c/crZQWAm'
+forumTopicId: 18309
 ---
 
 ## Description
@@ -24,11 +26,11 @@ Modify the new array <code>myArray</code> so that it contains both a <code>strin
 ```yml
 tests:
   - text: <code>myArray</code> should be an <code>array</code>.
-    testString: assert(typeof myArray == 'object', '<code>myArray</code> should be an <code>array</code>.');
+    testString: assert(typeof myArray == 'object');
   - text: The first item in <code>myArray</code> should be a <code>string</code>.
-    testString: assert(typeof myArray[0] !== 'undefined' && typeof myArray[0] == 'string', 'The first item in <code>myArray</code> should be a <code>string</code>.');
+    testString: assert(typeof myArray[0] !== 'undefined' && typeof myArray[0] == 'string');
   - text: The second item in <code>myArray</code> should be a <code>number</code>.
-    testString: assert(typeof myArray[1] !== 'undefined' && typeof myArray[1] == 'number', 'The second item in <code>myArray</code> should be a <code>number</code>.');
+    testString: assert(typeof myArray[1] !== 'undefined' && typeof myArray[1] == 'number');
 
 ```
 
@@ -40,10 +42,7 @@ tests:
 <div id='js-seed'>
 
 ```js
-// Example
-var ourArray = ["John", 23];
-
-// Only change code below this line.
+// Only change code below this line
 var myArray = [];
 
 ```

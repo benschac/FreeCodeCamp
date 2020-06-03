@@ -2,7 +2,9 @@
 id: 5a9036e138fddaf9a66b5d33
 title: Add Rows with grid-template-rows
 challengeType: 0
+isHidden: false
 videoUrl: 'https://scrimba.com/p/pByETK/cbp9Pua'
+forumTopicId: 301119
 ---
 
 ## Description
@@ -21,7 +23,7 @@ Add two rows to the grid that are <code>50px</code> tall each.
 ```yml
 tests:
   - text: <code>container</code> class should have a <code>grid-template-rows</code> property with two units of <code>50px</code>.
-    testString: assert(code.match(/.container\s*?{[\s\S]*grid-template-rows\s*?:\s*?50px\s*?50px\s*?;[\s\S]*}/gi), '<code>container</code> class should have a <code>grid-template-rows</code> property with two units of <code>50px</code>.');
+    testString: assert(code.match(/.container\s*?{[\s\S]*grid-template-rows\s*?:\s*?50px\s*?50px\s*?;[\s\S]*}/gi));
 
 ```
 
@@ -46,10 +48,10 @@ tests:
     background: LightGray;
     display: grid;
     grid-template-columns: 100px 100px 100px;
-    /* add your code below this line */
+    /* Only change code below this line */
 
-
-    /* add your code above this line */
+    
+    /* Only change code above this line */
   }
 </style>
 

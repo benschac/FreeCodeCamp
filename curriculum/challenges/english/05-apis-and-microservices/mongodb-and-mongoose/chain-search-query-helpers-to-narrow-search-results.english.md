@@ -2,17 +2,18 @@
 id: 587d7fb9367417b2b2512c12
 title: Chain Search Query Helpers to Narrow Search Results
 challengeType: 2
+isHidden: false
+forumTopicId: 301533
 ---
 
 ## Description
 <section id='description'>
-If you don’t pass the callback as the last argument to Model.find() (or to the other search methods), the query is not executed. You can store the query in a variable for later use. This kind of object enables you to build up a query using chaining syntax. The actual db search is executed when you finally chain the method .exec(). Pass your callback to this last method. There are many query helpers, here we’ll use the most ‘famous’ ones.
-Find people who like "burrito". Sort them by name, limit the results to two documents, and hide their age. Chain .find(), .sort(), .limit(), .select(), and then .exec(). Pass the done(err, data) callback to exec().
+If you don’t pass the callback as the last argument to <code>Model.find()</code> (or to the other search methods), the query is not executed. You can store the query in a variable for later use. This kind of object enables you to build up a query using chaining syntax. The actual db search is executed when you finally chain the method <code>.exec()</code>. You always need to pass your callback to this last method. There are many query helpers, here we’ll use the most ‘famous’ ones.
 </section>
 
 ## Instructions
 <section id='instructions'>
-
+Find people who like <code>burrito</code>. Sort them by name, limit the results to two documents, and hide their age. Chain <code>.find()</code>, <code>.sort()</code>, <code>.limit()</code>, <code>.select()</code>, and then <code>.exec()</code>. Pass the <code>done(err, data)</code> callback to <code>exec()</code>.
 </section>
 
 ## Tests
@@ -36,6 +37,11 @@ tests:
 <section id='solution'>
 
 ```js
-// solution required
+/**
+  Backend challenges don't need solutions, 
+  because they would need to be tested against a full working project. 
+  Please check our contributing guidelines to learn more.
+*/
 ```
+
 </section>

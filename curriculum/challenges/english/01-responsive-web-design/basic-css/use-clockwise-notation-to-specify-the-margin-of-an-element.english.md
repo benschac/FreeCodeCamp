@@ -2,7 +2,9 @@
 id: bad87fee1348bd9afdf08726
 title: Use Clockwise Notation to Specify the Margin of an Element
 challengeType: 0
+isHidden: false
 videoUrl: 'https://scrimba.com/c/cnpybAd'
+forumTopicId: 18345
 ---
 
 ## Description
@@ -15,7 +17,7 @@ These four values work like a clock: top, right, bottom, left, and will produce 
 
 ## Instructions
 <section id='instructions'>
-Use <code>Clockwise Notation</code> to give the element with the <code>blue-box</code> class a margin of <code>40px</code> on its top and left side, but only <code>20px</code> on its bottom and right side.
+Use Clockwise Notation to give the element with the <code>blue-box</code> class a margin of <code>40px</code> on its top and left side, but only <code>20px</code> on its bottom and right side.
 </section>
 
 ## Tests
@@ -32,7 +34,7 @@ tests:
   - text: Your <code>blue-box</code> class should give the left of elements <code>40px</code> of <code>margin</code>.
     testString: assert($(".blue-box").css("margin-left") === "40px");
   - text: You should use the clockwise notation to set the margin of <code>blue-box</code> class.
-    testString: const removeCssComments = str => str.replace(/\/\*[\s\S]+?\*\//g, '');assert(/\.blue-box\s*{[\s\S]*margin:\s*\d+px\s+\d+px\s+\d+px\s+\d+px(;[\s\S]*}|\s*)/.test(removeCssComments($('style').text())));
+    testString: const removeCssComments = str => str.replace(/\/\*[\s\S]+?\*\//g, '');assert(/\.blue-box\s*{[\s\S]*margin[\s]*:\s*\d+px\s+\d+px\s+\d+px\s+\d+px(;\s*[^}]+\s*}|;?\s*})/.test(removeCssComments($('style').text())));
 
 ```
 

@@ -1,16 +1,21 @@
 import {
+  delay,
   put,
   select,
   call,
   takeLatest,
   takeEvery,
   fork,
-  getContext
+  getContext,
+  take,
+  cancel
 } from 'redux-saga/effects';
-import { delay, channel } from 'redux-saga';
+import { channel } from 'redux-saga';
+import escape from 'lodash/escape';
 
 import {
   challengeDataSelector,
+  challengeMetaSelector,
   challengeTestsSelector,
   initConsole,
   updateConsole,
@@ -19,15 +24,29 @@ import {
   logsToConsole,
   updateTests,
   isBuildEnabledSelector,
-  disableBuildOnError
+  disableBuildOnError,
+  types
 } from './';
 
 import {
   buildChallenge,
+  canBuildChallenge,
   getTestRunner,
   challengeHasPreview,
-  updatePreview
+  updatePreview,
+  isJavaScriptChallenge,
+  isLoopProtected
 } from '../utils/build';
+
+// How long before bailing out of a preview.
+const previewTimeout = 2500;
+
+export function* executeCancellableChallengeSaga() {
+  const task = yield fork(executeChallengeSaga);
+
+  yield take(types.cancelTests);
+  yield cancel(task);
+}
 
 export function* executeChallengeSaga() {
   const isBuildEnabled = yield select(isBuildEnabledSelector);
@@ -36,22 +55,34 @@ export function* executeChallengeSaga() {
   }
 
   const consoleProxy = yield channel();
+
   try {
     yield put(initLogs());
     yield put(initConsole('// running tests'));
-    yield fork(logToConsole, consoleProxy);
+    // reset tests to initial state
+    const tests = (yield select(challengeTestsSelector)).map(
+      ({ text, testString }) => ({ text, testString })
+    );
+    yield put(updateTests(tests));
+
+    yield fork(takeEveryLog, consoleProxy);
     const proxyLogger = args => consoleProxy.put(args);
 
     const challengeData = yield select(challengeDataSelector);
-    const buildData = yield buildChallengeData(challengeData);
+    const challengeMeta = yield select(challengeMetaSelector);
+    const protect = isLoopProtected(challengeMeta);
+    const buildData = yield buildChallengeData(challengeData, {
+      preview: false,
+      protect
+    });
     const document = yield getContext('document');
     const testRunner = yield call(
       getTestRunner,
       buildData,
-      proxyLogger,
+      { proxyLogger },
       document
     );
-    const testResults = yield executeTests(testRunner);
+    const testResults = yield executeTests(testRunner, tests);
 
     yield put(updateTests(testResults));
     yield put(updateConsole('// tests completed'));
@@ -63,39 +94,52 @@ export function* executeChallengeSaga() {
   }
 }
 
-function* logToConsole(channel) {
+function* takeEveryLog(channel) {
+  // TODO: move all stringifying and escaping into the reducer so there is a
+  // single place responsible for formatting the logs.
   yield takeEvery(channel, function*(args) {
-    yield put(updateLogs(args));
+    yield put(updateLogs(escape(args)));
   });
 }
 
-function* buildChallengeData(challengeData) {
+function* takeEveryConsole(channel) {
+  // TODO: move all stringifying and escaping into the reducer so there is a
+  // single place responsible for formatting the console output.
+  yield takeEvery(channel, function*(args) {
+    yield put(updateConsole(escape(args)));
+  });
+}
+
+function* buildChallengeData(challengeData, options) {
   try {
-    return yield call(buildChallenge, challengeData);
+    return yield call(buildChallenge, challengeData, options);
   } catch (e) {
-    yield put(disableBuildOnError(e));
-    // eslint-disable-next-line no-throw-literal
-    throw 'Build failed';
+    yield put(disableBuildOnError());
+    throw e;
   }
 }
 
-function* executeTests(testRunner) {
-  const tests = yield select(challengeTestsSelector);
-  const testTimeout = 5000;
+function* executeTests(testRunner, tests, testTimeout = 5000) {
   const testResults = [];
-  for (const { text, testString } of tests) {
+  for (let i = 0; i < tests.length; i++) {
+    const { text, testString } = tests[i];
     const newTest = { text, testString };
+    // only the last test outputs console.logs to avoid log duplication.
+    const firstTest = i === 1;
     try {
-      const { pass, err } = yield call(testRunner, testString, testTimeout);
+      const { pass, err } = yield call(
+        testRunner,
+        testString,
+        testTimeout,
+        firstTest
+      );
       if (pass) {
         newTest.pass = true;
       } else {
         throw err;
       }
     } catch (err) {
-      newTest.message = text
-        .replace(/<code>(.*?)<\/code>/g, '$1')
-        .replace(/<wbr>/g, '');
+      newTest.message = text;
       if (err === 'timeout') {
         newTest.err = 'Test timed out';
         newTest.message = `${newTest.message} (${newTest.err})`;
@@ -112,6 +156,7 @@ function* executeTests(testRunner) {
   return testResults;
 }
 
+// updates preview frame and the fcc console.
 function* previewChallengeSaga() {
   yield delay(700);
 
@@ -119,24 +164,47 @@ function* previewChallengeSaga() {
   if (!isBuildEnabled) {
     return;
   }
-  const challengeData = yield select(challengeDataSelector);
-  if (!challengeHasPreview(challengeData)) {
-    return;
-  }
+
+  const logProxy = yield channel();
+  const proxyLogger = args => logProxy.put(args);
 
   try {
+    yield put(initLogs());
     yield put(initConsole(''));
-    const ctx = yield buildChallengeData(challengeData);
-    const document = yield getContext('document');
-    yield call(updatePreview, ctx, document);
+    yield fork(takeEveryConsole, logProxy);
+
+    const challengeData = yield select(challengeDataSelector);
+
+    if (canBuildChallenge(challengeData)) {
+      const challengeMeta = yield select(challengeMetaSelector);
+      const protect = isLoopProtected(challengeMeta);
+      const buildData = yield buildChallengeData(challengeData, {
+        preview: true,
+        protect
+      });
+      // evaluate the user code in the preview frame or in the worker
+      if (challengeHasPreview(challengeData)) {
+        const document = yield getContext('document');
+        yield call(updatePreview, buildData, document, proxyLogger);
+      } else if (isJavaScriptChallenge(challengeData)) {
+        const runUserCode = getTestRunner(buildData, { proxyLogger });
+        // without a testString the testRunner just evaluates the user's code
+        yield call(runUserCode, null, previewTimeout);
+      }
+    }
   } catch (err) {
-    console.error(err);
+    if (err === 'timeout') {
+      // eslint-disable-next-line no-ex-assign
+      err = `The code you have written is taking longer than the ${previewTimeout}ms our challenges allow. You may have created an infinite loop or need to write a more efficient algorithm`;
+    }
+    console.log(err);
+    yield put(updateConsole(escape(err)));
   }
 }
 
 export function createExecuteChallengeSaga(types) {
   return [
-    takeLatest(types.executeChallenge, executeChallengeSaga),
+    takeLatest(types.executeChallenge, executeCancellableChallengeSaga),
     takeLatest(
       [
         types.updateFile,

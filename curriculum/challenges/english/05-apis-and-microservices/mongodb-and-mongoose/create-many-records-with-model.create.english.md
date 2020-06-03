@@ -2,16 +2,18 @@
 id: 587d7fb7367417b2b2512c0a
 title: Create Many Records with model.create()
 challengeType: 2
+isHidden: false
+forumTopicId: 301537
 ---
 
 ## Description
 <section id='description'>
-Sometimes you need to create many instances of your models, e.g. when seeding a database with initial data. Model.create() takes an array of objects like [{name: 'John', ...}, {...}, ...] as the first argument, and saves them all in the db. Create many people with Model.create(), using the function argument arrayOfPeople.
+Sometimes you need to create many instances of your models, e.g. when seeding a database with initial data. <code>Model.create()</code> takes an array of objects like <code>[{name: 'John', ...}, {...}, ...]</code> as the first argument, and saves them all in the db.
 </section>
 
 ## Instructions
 <section id='instructions'>
-
+Create many people with <code>Model.create()</code>, using the function argument <code>arrayOfPeople</code>.
 </section>
 
 ## Tests
@@ -35,6 +37,11 @@ tests:
 <section id='solution'>
 
 ```js
-// solution required
+/**
+  Backend challenges don't need solutions, 
+  because they would need to be tested against a full working project. 
+  Please check our contributing guidelines to learn more.
+*/
 ```
+
 </section>

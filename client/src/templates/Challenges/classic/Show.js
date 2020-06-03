@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { graphql } from 'gatsby';
 import { first } from 'lodash';
-import Media from 'react-media';
+import Media from 'react-responsive';
 
 import LearnLayout from '../../../components/layouts/Learn';
 import Editor from './Editor';
@@ -19,19 +19,23 @@ import VideoModal from '../components/VideoModal';
 import ResetModal from '../components/ResetModal';
 import MobileLayout from './MobileLayout';
 import DesktopLayout from './DesktopLayout';
+import Hotkeys from '../components/Hotkeys';
 
-import { createGuideUrl } from '../utils';
+import { getGuideUrl } from '../utils';
 import { challengeTypes } from '../../../../utils/challengeTypes';
 import { ChallengeNode } from '../../../redux/propTypes';
-import { dasherize } from '../../../../utils';
+import { dasherize } from '../../../../../utils/slugs';
 import {
   createFiles,
   challengeFilesSelector,
   challengeTestsSelector,
+  initConsole,
   initTests,
   updateChallengeMeta,
   challengeMounted,
-  consoleOutputSelector
+  consoleOutputSelector,
+  executeChallenge,
+  cancelTests
 } from '../redux';
 
 import './classic.css';
@@ -47,27 +51,36 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       createFiles,
+      initConsole,
       initTests,
       updateChallengeMeta,
-      challengeMounted
+      challengeMounted,
+      executeChallenge,
+      cancelTests
     },
     dispatch
   );
 
 const propTypes = {
+  cancelTests: PropTypes.func.isRequired,
   challengeMounted: PropTypes.func.isRequired,
   createFiles: PropTypes.func.isRequired,
   data: PropTypes.shape({
     challengeNode: ChallengeNode
   }),
+  executeChallenge: PropTypes.func.isRequired,
   files: PropTypes.shape({
     key: PropTypes.string
   }),
+  initConsole: PropTypes.func.isRequired,
   initTests: PropTypes.func.isRequired,
   output: PropTypes.string,
   pageContext: PropTypes.shape({
     challengeMeta: PropTypes.shape({
-      nextChallengePath: PropTypes.string
+      id: PropTypes.string,
+      introPath: PropTypes.string,
+      nextChallengePath: PropTypes.string,
+      prevChallengePath: PropTypes.string
     })
   }),
   tests: PropTypes.arrayOf(
@@ -93,6 +106,9 @@ class ShowClassic extends Component {
     this.state = {
       resizing: false
     };
+
+    this.containerRef = React.createRef();
+    this.editorRef = React.createRef();
   }
   onResize() {
     this.setState({ resizing: true });
@@ -104,24 +120,11 @@ class ShowClassic extends Component {
 
   componentDidMount() {
     const {
-      challengeMounted,
-      createFiles,
-      initTests,
-      updateChallengeMeta,
       data: {
-        challengeNode: {
-          files,
-          title,
-          fields: { tests },
-          challengeType
-        }
-      },
-      pageContext: { challengeMeta }
+        challengeNode: { title }
+      }
     } = this.props;
-    createFiles(files);
-    initTests(tests);
-    updateChallengeMeta({ ...challengeMeta, title, challengeType });
-    challengeMounted(challengeMeta.id);
+    this.initializeComponent(title);
   }
 
   componentDidUpdate(prevProps) {
@@ -131,35 +134,42 @@ class ShowClassic extends Component {
       }
     } = prevProps;
     const {
+      data: {
+        challengeNode: { title: currentTitle }
+      }
+    } = this.props;
+    if (prevTitle !== currentTitle) {
+      this.initializeComponent(currentTitle);
+    }
+  }
+
+  initializeComponent(title) {
+    const {
       challengeMounted,
       createFiles,
+      initConsole,
       initTests,
       updateChallengeMeta,
       data: {
         challengeNode: {
           files,
-          title: currentTitle,
           fields: { tests },
           challengeType
         }
       },
       pageContext: { challengeMeta }
     } = this.props;
-    if (prevTitle !== currentTitle) {
-      createFiles(files);
-      initTests(tests);
-      updateChallengeMeta({
-        ...challengeMeta,
-        title: currentTitle,
-        challengeType
-      });
-      challengeMounted(challengeMeta.id);
-    }
+    initConsole('');
+    createFiles(files);
+    initTests(tests);
+    updateChallengeMeta({ ...challengeMeta, title, challengeType });
+    challengeMounted(challengeMeta.id);
   }
 
   componentWillUnmount() {
-    const { createFiles } = this.props;
+    const { createFiles, cancelTests } = this.props;
     createFiles({});
+    cancelTests();
   }
 
   getChallenge = () => this.props.data.challengeNode;
@@ -170,13 +180,6 @@ class ShowClassic extends Component {
       title
     } = this.getChallenge();
     return `${blockName}: ${title}`;
-  }
-
-  getGuideUrl() {
-    const {
-      fields: { slug }
-    } = this.getChallenge();
-    return createGuideUrl(slug);
   }
 
   getVideoUrl = () => this.getChallenge().videoUrl;
@@ -201,11 +204,12 @@ class ShowClassic extends Component {
       instructions
     } = this.getChallenge();
 
+    const { forumTopicId, title } = this.getChallenge();
     return (
       <SidePanel
         className='full-height'
         description={description}
-        guideUrl={this.getGuideUrl()}
+        guideUrl={getGuideUrl({ forumTopicId, title })}
         instructions={instructions}
         section={dasherize(blockName)}
         showToolPanel={showToolPanel}
@@ -217,9 +221,17 @@ class ShowClassic extends Component {
 
   renderEditor() {
     const { files } = this.props;
+
     const challengeFile = first(Object.keys(files).map(key => files[key]));
     return (
-      challengeFile && <Editor {...challengeFile} fileKey={challengeFile.key} />
+      challengeFile && (
+        <Editor
+          containerRef={this.containerRef}
+          ref={this.editorRef}
+          {...challengeFile}
+          fileKey={challengeFile.key}
+        />
+      )
     );
   }
 
@@ -244,45 +256,62 @@ class ShowClassic extends Component {
   }
 
   render() {
+    const {
+      fields: { blockName },
+      forumTopicId,
+      title
+    } = this.getChallenge();
+    const {
+      executeChallenge,
+      pageContext: {
+        challengeMeta: { introPath, nextChallengePath, prevChallengePath }
+      }
+    } = this.props;
     return (
-      <LearnLayout>
-        <Helmet
-          title={`Learn ${this.getBlockNameTitle()} | freeCodeCamp.org`}
-        />
-        <Media defaultMatches={false} query={{ maxWidth: MAX_MOBILE_WIDTH }}>
-          {matches =>
-            matches ? (
-              <MobileLayout
-                editor={this.renderEditor()}
-                guideUrl={this.getGuideUrl()}
-                hasPreview={this.hasPreview()}
-                instructions={this.renderInstructionsPanel({
-                  showToolPanel: false
-                })}
-                preview={this.renderPreview()}
-                testOutput={this.renderTestOutput()}
-                videoUrl={this.getVideoUrl()}
-              />
-            ) : (
-              <DesktopLayout
-                challengeFile={this.getChallengeFile()}
-                editor={this.renderEditor()}
-                hasPreview={this.hasPreview()}
-                instructions={this.renderInstructionsPanel({
-                  showToolPanel: true
-                })}
-                preview={this.renderPreview()}
-                resizeProps={this.resizeProps}
-                testOutput={this.renderTestOutput()}
-              />
-            )
-          }
-        </Media>
-        <CompletionModal />
-        <HelpModal />
-        <VideoModal videoUrl={this.getVideoUrl()} />
-        <ResetModal />
-      </LearnLayout>
+      <Hotkeys
+        editorRef={this.editorRef}
+        executeChallenge={executeChallenge}
+        innerRef={this.containerRef}
+        introPath={introPath}
+        nextChallengePath={nextChallengePath}
+        prevChallengePath={prevChallengePath}
+      >
+        <LearnLayout>
+          <Helmet
+            title={`Learn ${this.getBlockNameTitle()} | freeCodeCamp.org`}
+          />
+          <Media maxWidth={MAX_MOBILE_WIDTH}>
+            <MobileLayout
+              editor={this.renderEditor()}
+              guideUrl={getGuideUrl({ forumTopicId, title })}
+              hasPreview={this.hasPreview()}
+              instructions={this.renderInstructionsPanel({
+                showToolPanel: false
+              })}
+              preview={this.renderPreview()}
+              testOutput={this.renderTestOutput()}
+              videoUrl={this.getVideoUrl()}
+            />
+          </Media>
+          <Media minWidth={MAX_MOBILE_WIDTH + 1}>
+            <DesktopLayout
+              challengeFile={this.getChallengeFile()}
+              editor={this.renderEditor()}
+              hasPreview={this.hasPreview()}
+              instructions={this.renderInstructionsPanel({
+                showToolPanel: true
+              })}
+              preview={this.renderPreview()}
+              resizeProps={this.resizeProps}
+              testOutput={this.renderTestOutput()}
+            />
+          </Media>
+          <CompletionModal blockName={blockName} />
+          <HelpModal />
+          <VideoModal videoUrl={this.getVideoUrl()} />
+          <ResetModal />
+        </LearnLayout>
+      </Hotkeys>
     );
   }
 }
@@ -303,6 +332,7 @@ export const query = graphql`
       instructions
       challengeType
       videoUrl
+      forumTopicId
       fields {
         slug
         blockName

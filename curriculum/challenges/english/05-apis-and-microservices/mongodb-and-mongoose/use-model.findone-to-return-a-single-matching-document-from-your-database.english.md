@@ -2,16 +2,18 @@
 id: 587d7fb7367417b2b2512c0c
 title: Use model.findOne() to Return a Single Matching Document from Your Database
 challengeType: 2
+isHidden: false
+forumTopicId: 301545
 ---
 
 ## Description
 <section id='description'>
-Model.findOne() behaves like .find(), but it returns only one document (not an array), even if there are multiple items. It is especially useful when searching by properties that you have declared as unique. Find just one person which has a certain food in her favorites, using Model.findOne() -> Person. Use the function argument food as search key.
+<code>Model.findOne()</code> behaves like <code>.find()</code>, but it returns only one document (not an array), even if there are multiple items. It is especially useful when searching by properties that you have declared as unique. 
 </section>
 
 ## Instructions
 <section id='instructions'>
-
+Find just one person which has a certain food in the person&apos;s favorites, using <code>Model.findOne() -> Person</code>. Use the function argument food as search key.
 </section>
 
 ## Tests
@@ -35,6 +37,11 @@ tests:
 <section id='solution'>
 
 ```js
-// solution required
+/**
+  Backend challenges don't need solutions, 
+  because they would need to be tested against a full working project. 
+  Please check our contributing guidelines to learn more.
+*/
 ```
+
 </section>

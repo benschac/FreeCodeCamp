@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Helmet from 'react-helmet';
-import Spinner from 'react-spinkit';
+import { Loader, Spacer } from '../../components/helpers';
 import { Link } from 'gatsby';
 
-import notFoundLogo from '../../images/freeCodeCamp-404.svg';
+import notFoundLogo from '../../assets/images/freeCodeCamp-404.svg';
 import { quotes } from '../../resources/quotes.json';
 
 import './404.css';
@@ -31,13 +31,16 @@ class NotFoundPage extends Component {
       <div className='notfound-page-wrapper'>
         <Helmet title='Page Not Found | freeCodeCamp' />
         <img alt='404 Not Found' src={notFoundLogo} />
-        <h1>NOT FOUND</h1>
+        <Spacer />
+        <h1>Page not found.</h1>
+        <Spacer />
         {this.state.randomQuote ? (
           <div>
             <p>
               We couldn&#x27;t find what you were looking for, but here is a
               quote:
             </p>
+            <Spacer />
             <blockquote className='quote-wrapper'>
               <p className='quote'>
                 <span>&#8220;</span>
@@ -47,9 +50,10 @@ class NotFoundPage extends Component {
             </blockquote>
           </div>
         ) : (
-          <Spinner color='#006400' name='ball-clip-rotate-multiple' />
+          <Loader />
         )}
-        <Link className='btn-curriculum' to='/learn'>
+        <Spacer size={2} />
+        <Link className='btn btn-cta' to='/learn'>
           View the Curriculum
         </Link>
       </div>

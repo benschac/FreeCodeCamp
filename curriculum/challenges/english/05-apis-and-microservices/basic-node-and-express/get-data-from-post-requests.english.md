@@ -2,6 +2,8 @@
 id: 587d7fb2367417b2b2512bf8
 title: Get Data from POST Requests
 challengeType: 2
+isHidden: false
+forumTopicId: 301511
 ---
 
 ## Description
@@ -45,6 +47,11 @@ tests:
 <section id='solution'>
 
 ```js
-// solution required
+/**
+  Backend challenges don't need solutions, 
+  because they would need to be tested against a full working project. 
+  Please check our contributing guidelines to learn more.
+*/
 ```
+
 </section>

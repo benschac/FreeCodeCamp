@@ -2,7 +2,9 @@
 id: 5a90376038fddaf9a66b5d3c
 title: Align All Items Horizontally using justify-items
 challengeType: 0
+isHidden: false
 videoUrl: 'https://scrimba.com/p/pByETK/cJbpECn'
+forumTopicId: 301120
 ---
 
 ## Description
@@ -21,7 +23,7 @@ Use this property to center all our items horizontally.
 ```yml
 tests:
   - text: <code>container</code> class should have a <code>justify-items</code> property that has the value of <code>center</code>.
-    testString: assert(code.match(/.container\s*?{[\s\S]*justify-items\s*?:\s*?center\s*?;[\s\S]*}/gi), '<code>container</code> class should have a <code>justify-items</code> property that has the value of <code>center</code>.');
+    testString: assert(code.match(/.container\s*?{[\s\S]*justify-items\s*?:\s*?center\s*?;[\s\S]*}/gi));
 
 ```
 
@@ -49,10 +51,10 @@ tests:
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     grid-gap: 10px;
-    /* add your code below this line */
+    /* Only change code below this line */
 
-
-    /* add your code above this line */
+    
+    /* Only change code above this line */
   }
 </style>
 

@@ -2,22 +2,25 @@
 id: 587d7fb4367417b2b2512bfd
 title: Add Keywords to Your package.json
 challengeType: 2
+isHidden: false
+forumTopicId: 301526
 ---
 
 ## Description
 <section id='description'>
-The keywords-field is where you can describe your project using related keywords.
-Example
-<code>"keywords": [ "descriptive", "related", "words" ],</code>
+The <code>keywords</code> field is where you can describe your project using related keywords. Here's an example:
+
+```json
+"keywords": [ "descriptive", "related", "words" ],
+```
+
 As you can see, this field is structured as an array of double-quoted strings.
-Instructions
-Add an array of suitable strings to the keywords-field in the package.json of your Glitch project.
-One of the keywords should be freecodecamp.
 </section>
 
 ## Instructions
 <section id='instructions'>
-
+Add an array of suitable strings to the <code>keywords</code> field in the package.json file of your project.
+One of the keywords should be "freecodecamp".
 </section>
 
 ## Tests
@@ -45,6 +48,11 @@ tests:
 <section id='solution'>
 
 ```js
-// solution required
+/**
+  Backend challenges don't need solutions, 
+  because they would need to be tested against a full working project. 
+  Please check our contributing guidelines to learn more.
+*/
 ```
+
 </section>

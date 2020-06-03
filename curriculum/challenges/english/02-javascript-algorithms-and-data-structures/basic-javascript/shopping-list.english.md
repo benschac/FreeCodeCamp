@@ -2,7 +2,9 @@
 id: 56533eb9ac21ba0edf2244bc
 title: Shopping List
 challengeType: 1
+isHidden: false
 videoUrl: 'https://scrimba.com/c/c9MEKHZ'
+forumTopicId: 18280
 ---
 
 ## Description
@@ -23,14 +25,14 @@ There should be at least 5 sub-arrays in the list.
 
 ```yml
 tests:
-  - text: <code>myList</code> should be an array
-    testString: assert(isArray, '<code>myList</code> should be an array');
-  - text: The first elements in each of your sub-arrays must all be strings
-    testString: assert(hasString, 'The first elements in each of your sub-arrays must all be strings');
-  - text: The second elements in each of your sub-arrays must all be numbers
-    testString: assert(hasNumber, 'The second elements in each of your sub-arrays must all be numbers');
-  - text: You must have at least 5 items in your list
-    testString: assert(count > 4, 'You must have at least 5 items in your list');
+  - text: <code>myList</code> should be an array.
+    testString: assert(isArray);
+  - text: The first elements in each of your sub-arrays should all be strings.
+    testString: assert(hasString);
+  - text: The second elements in each of your sub-arrays should all be numbers.
+    testString: assert(hasNumber);
+  - text: You should have at least 5 items in your list.
+    testString: assert(count > 4);
 
 ```
 

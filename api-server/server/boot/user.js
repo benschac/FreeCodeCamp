@@ -11,6 +11,7 @@ import {
 } from '../utils/publicUserProps';
 import { fixCompletedChallengeItem } from '../../common/utils';
 import { ifNoUser401, ifNoUserRedirectTo } from '../utils/middleware';
+import { removeCookies } from '../utils/getSetAccessToken';
 
 const log = debugFactory('fcc:boot:user');
 const sendNonUserToHome = ifNoUserRedirectTo(homeLocation);
@@ -30,7 +31,7 @@ function bootUser(app) {
   api.post('/account/reset-progress', ifNoUser401, postResetProgress);
   api.post('/user/report-user/', ifNoUser401, postReportUserProfile);
 
-  app.use('/internal', api);
+  app.use(api);
 }
 
 function createReadSessionUser(app) {
@@ -151,13 +152,9 @@ function getUnlinkSocial(req, res, next) {
 
 function postResetProgress(req, res, next) {
   const { user } = req;
-  user.updateAttributes(
+  return user.updateAttributes(
     {
-      progressTimestamps: [
-        {
-          timestamp: Date.now()
-        }
-      ],
+      progressTimestamps: [Date.now()],
       currentChallengeId: '',
       isRespWebDesignCert: false,
       is2018DataVisCert: false,
@@ -165,21 +162,23 @@ function postResetProgress(req, res, next) {
       isJsAlgoDataStructCert: false,
       isApisMicroservicesCert: false,
       isInfosecQaCert: false,
+      isQaCert: false,
+      isInfosecCert: false,
       is2018FullStackCert: false,
       isFrontEndCert: false,
       isBackEndCert: false,
       isDataVisCert: false,
       isFullStackCert: false,
+      isSciCompPyCert: false,
+      isDataAnalysisPyCert: false,
+      isMachineLearningPyCert: false,
       completedChallenges: []
     },
     function(err) {
       if (err) {
         return next(err);
       }
-      return res.status(200).json({
-        messageType: 'success',
-        message: 'You have successfully reset your progress'
-      });
+      return res.sendStatus(200);
     }
   );
 }
@@ -187,21 +186,13 @@ function postResetProgress(req, res, next) {
 function createPostDeleteAccount(app) {
   const { User } = app.models;
   return function postDeleteAccount(req, res, next) {
-    User.destroyById(req.user.id, function(err) {
+    return User.destroyById(req.user.id, function(err) {
       if (err) {
         return next(err);
       }
       req.logout();
-      req.flash('success', 'You have successfully deleted your account.');
-      const config = {
-        signed: !!req.signedCookies,
-        domain: process.env.COOKIE_DOMAIN || 'localhost'
-      };
-      res.clearCookie('jwt_access_token', config);
-      res.clearCookie('access_token', config);
-      res.clearCookie('userId', config);
-      res.clearCookie('_csrf', config);
-      return res.status(200).end();
+      removeCookies(req, res);
+      return res.sendStatus(200);
     });
   };
 }
@@ -219,13 +210,13 @@ function createPostReportUserProfile(app) {
     if (!username || !report || report === '') {
       return res.json({
         type: 'danger',
-        message: 'Oops, something is not right please re-check your submission.'
+        message: 'Check if you have provided a username and a report'
       });
     }
     return Email.send$(
       {
         type: 'email',
-        to: 'team@freecodecamp.org',
+        to: 'support@freecodecamp.org',
         cc: user.email,
         from: 'team@freecodecamp.org',
         subject: `Abuse Report : Reporting ${username}'s profile.`,

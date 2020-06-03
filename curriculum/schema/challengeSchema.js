@@ -1,6 +1,8 @@
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 
+const { challengeTypes } = require('../../client/utils/challengeTypes');
+
 function getSchemaForLang(lang) {
   let schema = Joi.object().keys({
     block: Joi.string(),
@@ -8,11 +10,15 @@ function getSchemaForLang(lang) {
     challengeOrder: Joi.number(),
     challengeType: Joi.number()
       .min(0)
-      .max(9)
+      .max(11)
       .required(),
     checksum: Joi.number(),
     dashedName: Joi.string(),
-    description: Joi.string().required(),
+    description: Joi.when('challengeType', {
+      is: Joi.only([challengeTypes.step, challengeTypes.video]),
+      then: Joi.string().allow(''),
+      otherwise: Joi.string().required()
+    }),
     fileName: Joi.string(),
     files: Joi.array().items(
       Joi.object().keys({
@@ -35,16 +41,29 @@ function getSchemaForLang(lang) {
     ),
     guideUrl: Joi.string().uri({ scheme: 'https' }),
     videoUrl: Joi.string().allow(''),
+    forumTopicId: Joi.number(),
     helpRoom: Joi.string(),
     id: Joi.objectId().required(),
-    instructions: Joi.string().required(),
-    isBeta: Joi.bool(),
+    instructions: Joi.string().allow(''),
+    isHidden: Joi.bool().required(),
     isComingSoon: Joi.bool(),
     isLocked: Joi.bool(),
     isPrivate: Joi.bool(),
     isRequired: Joi.bool(),
     name: Joi.string(),
     order: Joi.number(),
+    // video challenges only:
+    videoId: Joi.when('challengeType', {
+      is: challengeTypes.video,
+      then: Joi.string().required()
+    }),
+    question: Joi.object().keys({
+      text: Joi.string().required(),
+      answers: Joi.array()
+        .items(Joi.string())
+        .required(),
+      solution: Joi.number().required()
+    }),
     required: Joi.array().items(
       Joi.object().keys({
         link: Joi.string(),

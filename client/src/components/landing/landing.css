@@ -1,0 +1,29 @@
+.large-p {
+  font-size: 24px;
+}
+
+/* Buttons with a lot of text can overflow and mess up formatting on small
+   screens, this stops that unless the word itself is too large. */
+
+.btn {
+  white-space: pre-line;
+}
+
+.logo-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: center;
+  margin-bottom: 10px;
+}
+
+.landing-page ul {
+  list-style: none;
+  padding-left: 0px;
+}
+
+#featured-logos {
+  margin-top: 10px;
+  max-width: 600px;
+}

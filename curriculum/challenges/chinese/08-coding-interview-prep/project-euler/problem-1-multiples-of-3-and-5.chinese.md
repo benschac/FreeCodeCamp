@@ -7,7 +7,10 @@ localeTitle: 问题1：3和5的倍数
 ---
 
 ## Description
-<section id="description">如果我们列出10以下是3或5的倍数的所有自然数，我们得到3,5,6和9.这些倍数的总和是23.求出所提供参数以下3或5的所有倍数的总和价值<code>number</code> 。 </section>
+<section id="description">
+  如果我们列出所有10以下是3或5的倍数的自然数，我们会得到3，5，6和9。这些倍数的总和是23。
+  求出所有在<code>number</code>以下的3或5的倍数的总和。
+</section>
 
 ## Instructions
 <section id="instructions">
@@ -19,13 +22,13 @@ localeTitle: 问题1：3和5的倍数
 ```yml
 tests:
   - text: <code>multiplesOf3and5(1000)</code>应该返回233168。
-    testString: 'assert.strictEqual(multiplesOf3and5(1000), 233168, "<code>multiplesOf3and5(1000)</code> should return 233168.");'
+    testString: assert.strictEqual(multiplesOf3and5(1000), 233168);
   - text: <code>multiplesOf3and5(49)</code>应该返回543。
-    testString: 'assert.strictEqual(multiplesOf3and5(49), 543, "<code>multiplesOf3and5(49)</code> should return 543.");'
+    testString: assert.strictEqual(multiplesOf3and5(49), 543);
   - text: <code>multiplesOf3and5(19564)</code>应该返回89301183。
-    testString: 'assert.strictEqual(multiplesOf3and5(19564), 89301183, "<code>multiplesOf3and5(19564)</code> should return 89301183.");'
+    testString: assert.strictEqual(multiplesOf3and5(19564), 89301183);
   - text: 您的函数未使用我们的测试值返回正确的结果。
-    testString: 'assert.strictEqual(multiplesOf3and5(8456), 16687353, "Your function is not returning the correct result using our tests values.");'
+    testString: assert.strictEqual(multiplesOf3and5(8456), 16687353);
 
 ```
 

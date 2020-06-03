@@ -13,14 +13,20 @@ import {
   legacyFrontEndChallengeId,
   legacyBackEndChallengeId,
   legacyDataVisId,
+  legacyInfosecQaId,
   respWebDesignId,
   frontEndLibsId,
   jsAlgoDataStructId,
   dataVis2018Id,
   apisMicroservicesId,
-  infosecQaId,
-  fullStackId
+  infosecId,
+  qaId,
+  fullStackId,
+  sciCompPyId,
+  dataAnalysisPyId,
+  machineLearningPyId
 } from '../utils/constantStrings.json';
+import { oldDataVizId } from '../../../config/misc';
 import certTypes from '../utils/certTypes.json';
 import superBlockCertTypeMap from '../utils/superBlockCertTypeMap';
 import { completeCommitment$ } from '../utils/commit';
@@ -37,7 +43,17 @@ export default function bootCertificate(app) {
   api.put('/certificate/verify', ifNoUser401, ifNoSuperBlock404, verifyCert);
   api.get('/certificate/showCert/:username/:cert', showCert);
 
-  app.use('/internal', api);
+  app.use(api);
+}
+
+export function getFallbackFrontEndDate(completedChallenges, completedDate) {
+  var chalIds = [...Object.values(certIds), oldDataVizId];
+
+  const latestCertDate = completedChallenges
+    .filter(chal => chalIds.includes(chal.id))
+    .sort((a, b) => b.completedDate - a.completedDate)[0].completedDate;
+
+  return latestCertDate ? latestCertDate : completedDate;
 }
 
 const noNameMessage = dedent`
@@ -70,7 +86,7 @@ function ifNoSuperBlock404(req, res, next) {
   return res.status(404).end();
 }
 
-const renderCertifedEmail = loopback.template(
+const renderCertifiedEmail = loopback.template(
   path.join(__dirname, '..', 'views', 'emails', 'certified.ejs')
 );
 
@@ -82,6 +98,7 @@ function createCertTypeIds(app) {
     [certTypes.frontEnd]: getIdsForCert$(legacyFrontEndChallengeId, Challenge),
     [certTypes.backEnd]: getIdsForCert$(legacyBackEndChallengeId, Challenge),
     [certTypes.dataVis]: getIdsForCert$(legacyDataVisId, Challenge),
+    [certTypes.infosecQa]: getIdsForCert$(legacyInfosecQaId, Challenge),
 
     // modern
     [certTypes.respWebDesign]: getIdsForCert$(respWebDesignId, Challenge),
@@ -92,8 +109,15 @@ function createCertTypeIds(app) {
       apisMicroservicesId,
       Challenge
     ),
-    [certTypes.infosecQa]: getIdsForCert$(infosecQaId, Challenge),
-    [certTypes.fullStack]: getIdsForCert$(fullStackId, Challenge)
+    [certTypes.qa]: getIdsForCert$(qaId, Challenge),
+    [certTypes.infosec]: getIdsForCert$(infosecId, Challenge),
+    [certTypes.fullStack]: getIdsForCert$(fullStackId, Challenge),
+    [certTypes.sciCompPy]: getIdsForCert$(sciCompPyId, Challenge),
+    [certTypes.dataAnalysisPy]: getIdsForCert$(dataAnalysisPyId, Challenge),
+    [certTypes.machineLearningPy]: getIdsForCert$(
+      machineLearningPyId,
+      Challenge
+    )
   };
 }
 
@@ -107,39 +131,54 @@ const certIds = {
   [certTypes.frontEnd]: legacyFrontEndChallengeId,
   [certTypes.backEnd]: legacyBackEndChallengeId,
   [certTypes.dataVis]: legacyDataVisId,
+  [certTypes.infosecQa]: legacyInfosecQaId,
   [certTypes.respWebDesign]: respWebDesignId,
   [certTypes.frontEndLibs]: frontEndLibsId,
   [certTypes.jsAlgoDataStruct]: jsAlgoDataStructId,
   [certTypes.dataVis2018]: dataVis2018Id,
   [certTypes.apisMicroservices]: apisMicroservicesId,
-  [certTypes.infosecQa]: infosecQaId,
-  [certTypes.fullStack]: fullStackId
+  [certTypes.qa]: qaId,
+  [certTypes.infosec]: infosecId,
+  [certTypes.fullStack]: fullStackId,
+  [certTypes.sciCompPy]: sciCompPyId,
+  [certTypes.dataAnalysisPy]: dataAnalysisPyId,
+  [certTypes.machineLearningPy]: machineLearningPyId
 };
 
 const certText = {
   [certTypes.frontEnd]: 'Legacy Front End',
   [certTypes.backEnd]: 'Legacy Back End',
   [certTypes.dataVis]: 'Legacy Data Visualization',
+  [certTypes.infosecQa]: 'Legacy Information Security and Quality Assurance',
   [certTypes.fullStack]: 'Full Stack',
   [certTypes.respWebDesign]: 'Responsive Web Design',
   [certTypes.frontEndLibs]: 'Front End Libraries',
   [certTypes.jsAlgoDataStruct]: 'JavaScript Algorithms and Data Structures',
   [certTypes.dataVis2018]: 'Data Visualization',
   [certTypes.apisMicroservices]: 'APIs and Microservices',
-  [certTypes.infosecQa]: 'Information Security and Quality Assurance'
+  [certTypes.qa]: 'Quality Assurance',
+  [certTypes.infosec]: 'Information Security',
+  [certTypes.sciCompPy]: 'Scientific Computing with Python',
+  [certTypes.dataAnalysisPy]: 'Data Analysis with Python',
+  [certTypes.machineLearningPy]: 'Machine Learning with Python'
 };
 
 const completionHours = {
   [certTypes.frontEnd]: 400,
   [certTypes.backEnd]: 400,
   [certTypes.dataVis]: 400,
+  [certTypes.infosecQa]: 300,
   [certTypes.fullStack]: 1800,
   [certTypes.respWebDesign]: 300,
   [certTypes.frontEndLibs]: 300,
   [certTypes.jsAlgoDataStruct]: 300,
   [certTypes.dataVis2018]: 300,
   [certTypes.apisMicroservices]: 300,
-  [certTypes.infosecQa]: 300
+  [certTypes.qa]: 300,
+  [certTypes.infosec]: 300,
+  [certTypes.sciCompPy]: 400,
+  [certTypes.dataAnalysisPy]: 400,
+  [certTypes.machineLearningPy]: 400
 };
 
 function getIdsForCert$(id, Challenge) {
@@ -163,7 +202,11 @@ function sendCertifiedEmail(
     isJsAlgoDataStructCert,
     isDataVisCert,
     isApisMicroservicesCert,
-    isInfosecQaCert
+    isQaCert,
+    isInfosecCert,
+    isSciCompPyCert,
+    isDataAnalysisPyCert,
+    isMachineLearningPyCert
   },
   send$
 ) {
@@ -174,7 +217,11 @@ function sendCertifiedEmail(
     !isJsAlgoDataStructCert ||
     !isDataVisCert ||
     !isApisMicroservicesCert ||
-    !isInfosecQaCert
+    !isQaCert ||
+    !isInfosecCert ||
+    !isSciCompPyCert ||
+    !isDataAnalysisPyCert ||
+    !isMachineLearningPyCert
   ) {
     return Observable.just(false);
   }
@@ -186,7 +233,7 @@ function sendCertifiedEmail(
       Congratulations on completing all of the
       freeCodeCamp certifications!
     `,
-    text: renderCertifedEmail({
+    text: renderCertifiedEmail({
       username,
       name
     })
@@ -202,10 +249,15 @@ function getUserIsCertMap(user) {
     is2018DataVisCert = false,
     isApisMicroservicesCert = false,
     isInfosecQaCert = false,
+    isQaCert = false,
+    isInfosecCert = false,
     isFrontEndCert = false,
     isBackEndCert = false,
     isDataVisCert = false,
-    isFullStackCert = false
+    isFullStackCert = false,
+    isSciCompPyCert = false,
+    isDataAnalysisPyCert = false,
+    isMachineLearningPyCert = false
   } = user;
 
   return {
@@ -215,10 +267,15 @@ function getUserIsCertMap(user) {
     is2018DataVisCert,
     isApisMicroservicesCert,
     isInfosecQaCert,
+    isQaCert,
+    isInfosecCert,
     isFrontEndCert,
     isBackEndCert,
     isDataVisCert,
-    isFullStackCert
+    isFullStackCert,
+    isSciCompPyCert,
+    isDataAnalysisPyCert,
+    isMachineLearningPyCert
   };
 }
 
@@ -339,6 +396,11 @@ function createShowCert(app) {
       is2018DataVisCert: true,
       isApisMicroservicesCert: true,
       isInfosecQaCert: true,
+      isQaCert: true,
+      isInfosecCert: true,
+      isSciCompPyCert: true,
+      isDataAnalysisPyCert: true,
+      isMachineLearningPyCert: true,
       isHonest: true,
       username: true,
       name: true,
@@ -391,8 +453,8 @@ function createShowCert(app) {
             {
               type: 'info',
               message: dedent`
-              ${username} has chosen to make their profile
-                private. They will need to make their profile public
+              ${username} has chosen to make their portfolio
+                private. They will need to make their portfolio public
                 in order for others to be able to view their certification.
             `
             }
@@ -430,8 +492,31 @@ function createShowCert(app) {
 
       if (user[certType]) {
         const { completedChallenges = [] } = user;
-        const { completedDate = new Date() } =
-          _.find(completedChallenges, ({ id }) => certId === id) || {};
+        const certChallenge = _.find(
+          completedChallenges,
+          ({ id }) => certId === id
+        );
+        let { completedDate = new Date() } = certChallenge || {};
+
+        // the challenge id has been rotated for isDataVisCert
+        if (certType === 'isDataVisCert' && !certChallenge) {
+          let oldDataVisIdChall = _.find(
+            completedChallenges,
+            ({ id }) => oldDataVizId === id
+          );
+
+          if (oldDataVisIdChall) {
+            completedDate = oldDataVisIdChall.completedDate || completedDate;
+          }
+        }
+
+        // if fullcert is not found, return the latest completedDate
+        if (certType === 'isFullStackCert' && !certChallenge) {
+          completedDate = getFallbackFrontEndDate(
+            completedChallenges,
+            completedDate
+          );
+        }
 
         const { username, name } = user;
         return res.json({
@@ -446,9 +531,9 @@ function createShowCert(app) {
         messages: [
           {
             type: 'info',
-            message: `It looks like user ${username} is not ${
-              certText[certType]
-            } certified`
+            message: `
+It looks like user ${username} is not ${certText[certType]} certified
+          `
           }
         ]
       });

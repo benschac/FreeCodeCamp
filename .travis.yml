@@ -14,6 +14,7 @@ env:
 
 before_install:
   - npm config set loglevel warn
+  - cp sample.env .env
 
 install: npm ci
 
@@ -28,9 +29,3 @@ jobs:
 
     - stage: Unit and Integration tests
       script: npm test
-
-    - stage: Artifacts builds
-      if: branch = master && type != pull_request
-      script: bash tools/ci-scripts/trigger-build.sh
-      install: skip
-      before_script: skip

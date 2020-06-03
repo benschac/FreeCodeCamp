@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import { navigate as gatsbyNavigate } from 'gatsby';
 import { Button } from '@freecodecamp/react-bootstrap';
 
-import { hardGoTo, isSignedInSelector } from '../../../redux';
+import { hardGoTo as navigate, isSignedInSelector } from '../../../redux';
 import { apiLocation } from '../../../../config/env.json';
 
 import { gtagReportConversion } from '../../../analytics/gtag';
@@ -18,15 +18,15 @@ const mapStateToProps = createSelector(
     isSignedIn
   })
 );
-const mapDispatchToProps = dispatch => ({
-  navigate: location => dispatch(hardGoTo(location))
-});
+const mapDispatchToProps = {
+  navigate
+};
 
 const createOnClick = (navigate, isSignedIn) => e => {
   e.preventDefault();
   gtagReportConversion();
   if (isSignedIn) {
-    return gatsbyNavigate('/welcome');
+    return gatsbyNavigate('/learn');
   }
   return navigate(`${apiLocation}/signin`);
 };
@@ -34,17 +34,15 @@ const createOnClick = (navigate, isSignedIn) => e => {
 function Login(props) {
   const { children, navigate, isSignedIn, ...restProps } = props;
   return (
-    <a href='/signin' onClick={createOnClick(navigate, isSignedIn)}>
-      <Button
-        {...restProps}
-        bsStyle='default'
-        className={
-          (restProps.block ? 'btn-cta-big' : '') + ' signup-btn btn-cta'
-        }
-      >
-        {children || 'Sign In'}
-      </Button>
-    </a>
+    <Button
+      bsStyle='default'
+      className={(restProps.block ? 'btn-cta-big' : '') + ' signup-btn btn-cta'}
+      href='/signin'
+      onClick={createOnClick(navigate, isSignedIn)}
+      {...restProps}
+    >
+      {children || 'Sign In'}
+    </Button>
   );
 }
 

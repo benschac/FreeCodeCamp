@@ -2,7 +2,9 @@
 id: 587d78ad367417b2b2512afa
 title: Use the flex-wrap Property to Wrap a Row or Column
 challengeType: 0
+isHidden: false
 videoUrl: 'https://scrimba.com/p/pVaDAv/cQv9ZtG'
+forumTopicId: 301114
 ---
 
 ## Description
@@ -15,7 +17,7 @@ CSS also has options for the direction of the wrap:
 
 ## Instructions
 <section id='instructions'>
-The current layout has too many boxes for one row. Add the CSS property <code>flex-wrap</code> to the <code>#box-container</code> element, and give it a value of wrap.
+The current layout has too many boxes for one row. Add the CSS property <code>flex-wrap</code> to the <code>#box-container</code> element, and give it a value of <code>wrap</code>.
 </section>
 
 ## Tests
@@ -23,8 +25,8 @@ The current layout has too many boxes for one row. Add the CSS property <code>fl
 
 ```yml
 tests:
-  - text: The <code>#box-container</code> element should have the <code>flex-wrap</code> property set to a value of wrap.
-    testString: assert($('#box-container').css('flex-wrap') == 'wrap', 'The <code>#box-container</code> element should have the <code>flex-wrap</code> property set to a value of wrap.');
+  - text: The <code>#box-container</code> element should have the <code>flex-wrap</code> property set to a value of <code>wrap</code>.
+    testString: assert($('#box-container').css('flex-wrap') == 'wrap');
 
 ```
 
@@ -95,7 +97,55 @@ tests:
 ## Solution
 <section id='solution'>
 
-```js
-// solution required
+```html
+<style>
+  #box-container {
+    background: gray;
+    display: flex;
+    height: 100%;
+    flex-wrap: wrap;
+  }
+  #box-1 {
+    background-color: dodgerblue;
+    width: 25%;
+    height: 50%;
+  }
+
+  #box-2 {
+    background-color: orangered;
+    width: 25%;
+    height: 50%;
+  }
+  #box-3 {
+    background-color: violet;
+    width: 25%;
+    height: 50%;
+  }
+  #box-4 {
+    background-color: yellow;
+    width: 25%;
+    height: 50%;
+  }
+  #box-5 {
+    background-color: green;
+    width: 25%;
+    height: 50%;
+  }
+  #box-6 {
+    background-color: black;
+    width: 25%;
+    height: 50%;
+  }
+</style>
+
+<div id="box-container">
+  <div id="box-1"></div>
+  <div id="box-2"></div>
+  <div id="box-3"></div>
+  <div id="box-4"></div>
+  <div id="box-5"></div>
+  <div id="box-6"></div>
+</div>
 ```
+
 </section>

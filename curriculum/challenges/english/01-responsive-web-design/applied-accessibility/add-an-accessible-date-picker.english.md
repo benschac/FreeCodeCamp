@@ -2,7 +2,9 @@
 id: 587d778b367417b2b2512aa8
 title: Add an Accessible Date Picker
 challengeType: 0
-videoUrl: 'https://scrimba.com/c/cD9DJHr'
+isHidden: false
+videoUrl: 'https://scrimba.com/c/cR3bRbCV'
+forumTopicId: 301008
 ---
 
 ## Description
@@ -11,7 +13,12 @@ Forms often include the <code>input</code> field, which can be used to create se
 You may have noticed the <code>text</code> and <code>submit</code> input types in prior challenges, and HTML5 introduced an option to specify a <code>date</code> field. Depending on browser support, a date picker shows up in the <code>input</code> field when it's in focus, which makes filling in a form easier for all users.
 For older browsers, the type will default to <code>text</code>, so it helps to show users the expected date format in the label or as placeholder text just in case.
 Here's an example:
-<blockquote>&lt;label for=&quot;input1&quot;&gt;Enter a date:&lt;/label&gt;<br>&lt;input type=&quot;date&quot; id=&quot;input1&quot; name=&quot;input1&quot;&gt;<br></blockquote>
+
+```html
+<label for="input1">Enter a date:</label>
+<input type="date" id="input1" name="input1">
+```
+
 </section>
 
 ## Instructions
@@ -25,13 +32,13 @@ Camper Cat is setting up a Mortal Kombat tournament and wants to ask his competi
 ```yml
 tests:
   - text: Your code should add one <code>input</code> tag for the date selector field.
-    testString: assert($('input').length == 2, 'Your code should add one <code>input</code> tag for the date selector field.');
+    testString: assert($('input').length == 2);
   - text: Your <code>input</code> tag should have a <code>type</code> attribute with a value of date.
-    testString: assert($('input').attr('type') == 'date', 'Your <code>input</code> tag should have a <code>type</code> attribute with a value of date.');
+    testString: assert($('input').attr('type') == 'date');
   - text: Your <code>input</code> tag should have an <code>id</code> attribute with a value of pickdate.
-    testString: assert($('input').attr('id') == 'pickdate', 'Your <code>input</code> tag should have an <code>id</code> attribute with a value of pickdate.');
+    testString: assert($('input').attr('id') == 'pickdate');
   - text: Your <code>input</code> tag should have a <code>name</code> attribute with a value of date.
-    testString: assert($('input').attr('name') == 'date', 'Your <code>input</code> tag should have a <code>name</code> attribute with a value of date.');
+    testString: assert($('input').attr('name') == 'date');
 
 ```
 
@@ -54,11 +61,11 @@ tests:
         <p>Tell us the best date for the competition</p>
         <label for="pickdate">Preferred Date:</label>
 
-        <!-- Add your code below this line -->
+        <!-- Only change code below this line -->
 
 
 
-        <!-- Add your code above this line -->
+        <!-- Only change code above this line -->
 
         <input type="submit" name="submit" value="Submit">
       </form>
@@ -96,4 +103,5 @@ tests:
   <footer>&copy; 2018 Camper Cat</footer>
 </body>
 ```
+
 </section>
